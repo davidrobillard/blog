@@ -1,0 +1,22 @@
+# netgroup.ldif
+#
+# Make sure to run this command before :
+# ldapdelete  cn=nfs.lan,ou=netgroup,ou=services,dc=company,dc=com
+# 
+# Then run this one :
+# ldapmodify -axZWD cn=admin,dc=company,dc=com -f <this_file>.ldif
+#
+dn: cn=nfs.lan,ou=netgroup,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: nisNetgroup
+cn: nfs.lan
+nisNetgroupTriple: (alice.company.com,,)
+nisNetgroupTriple: (bob.company.com,,)
+nisNetgroupTriple: (charlie.company.com,,)
+nisNetgroupTriple: (han.company.com,,)
+nisNetgroupTriple: (solo.company.com,,)
+nisNetgroupTriple: (anakin.company.com,,)
+nisNetgroupTriple: (vader.company.com,,)
+description: All LAN NFS Clients
+
+# EOF

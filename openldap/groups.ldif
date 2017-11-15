@@ -1,0 +1,75 @@
+# groups.ldif
+#
+# A collection of system and user groups.
+
+dn: cn=sysadmin,ou=groups,dc=company,dc=com
+cn: sysadmin
+objectClass: top
+objectClass: posixGroup
+gidNumber: 1100
+description: UNIX systems administrators
+
+dn: cn=oinstall,ou=groups,dc=company,dc=com
+cn: oinstall
+objectClass: top
+objectClass: posixGroup
+gidNumber: 500
+description: Oracle Installer
+
+dn: cn=dba,ou=groups,dc=company,dc=com
+cn: dba
+objectClass: top
+objectClass: posixGroup
+gidNumber: 501
+description: Oracle DBA
+
+dn: cn=sysoper,ou=groups,dc=company,dc=com
+cn: sysoper
+objectClass: top
+objectClass: posixGroup
+gidNumber: 502
+description: Oracle SYS Operator
+
+dn: cn=asmadmin,ou=groups,dc=company,dc=com
+cn: asmadmin
+objectClass: top
+objectClass: posixGroup
+gidNumber: 503
+description: Oracle ASM Admin
+
+dn: cn=asmdba,ou=groups,dc=company,dc=com
+cn: asmdba
+objectClass: top
+objectClass: posixGroup
+gidNumber: 504
+description: Oracle ASM DBA
+
+dn: cn=asmoper,ou=groups,dc=company,dc=com
+cn: asmoper
+objectClass: top
+objectClass: posixGroup
+gidNumber: 505
+description: Oracle ASM Operator
+
+dn: cn=panic,ou=groups,dc=company,dc=com
+cn: panic
+objectClass: top
+objectClass: posixGroup
+gidNumber: 911
+description: Panic user's group
+
+dn: cn=nssproxy,ou=groups,dc=company,dc=com
+cn: nssproxy
+objectClass: top
+objectClass: posixGroup
+gidNumber: 801
+description: Network Service Switch Proxy
+
+dn: cn=test.group,ou=groups,dc=company,dc=com
+cn: test.group
+objectClass: top
+objectClass: posixGroup
+gidNumber: 1101
+description: Test Group
+
+# EOF

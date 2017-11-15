@@ -1,0 +1,9 @@
+sql "create pfile=''/backup/oracle/rdbms.prod/&1/pfile.txt'' from spfile";
+sql "alter database backup controlfile to trace as ''/backup/oracle/rdbms.prod/&1/controlfile.before.backup.txt'' reuse";
+recover copy of database with tag PRODUCTION until time 'sysdate - 1';
+backup as compressed backupset incremental level 1 for recover of copy with tag PRODUCTION database;
+backup as compressed backupset archivelog all delete all input;
+sql "alter database backup controlfile to trace as ''/backup/oracle/rdbms.prod/&1/controlfile.after.backup.txt'' reuse";
+backup recovery area to destination '/backup/oracle/rdbms.prod/&1';
+crosscheck backup;
+delete noprompt obsolete;

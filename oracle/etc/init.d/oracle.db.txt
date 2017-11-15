@@ -1,0 +1,198 @@
+#!/bin/sh
+
+# oracle.db
+#
+# $Id: oracle.db,v 1.2 2008/08/27 20:00:15 drobilla Exp $
+#
+# RedHat specific Startup/Shutdown script for Oracle Databases.
+#
+# chkconfig: 3 82 07
+# description: Startup/Shutdown script for Oracle Databases.
+#
+# David Robillard, August 19th, 2008.
+
+umask 022
+PATH="/bin:/usr/bin"
+export PATH
+
+# Source function library.
+. /etc/init.d/functions
+
+# ORATAB
+# Full path to the oratab file.
+#
+ORATAB="/etc/oratab"
+
+if [ ! -f ${ORATAB} ]; then
+	echo "ERROR: Could not locate oratab file: ${ORATAB}. Bailing out."
+	exit 1
+fi
+
+# ORACLE_USER
+# Username of the Oracle database software.
+#
+ORACLE_USER="oracle"
+
+# ENV_FILE
+# Name of the ${ORACLE_USER}'s environment file.
+#
+ENV_FILE=".bash_profile"
+export ENV_FILE
+
+# Make sure we have the finger(1) command available.
+which finger >/dev/null 2>&1
+
+if [ "$?" -ne "0" ]; then
+	echo "ERROR : the finger command is either not installed or not in the PATH."
+	exit 1
+fi
+
+# Find the oracle user's .bash_profile.
+ORACLE_HOME_DIR=`finger -mp ${ORACLE_USER} | grep ^Directory: | cut -d' ' -f2`
+
+if [ "x${ORACLE_HOME_DIR}" = "x" ]; then
+        echo "ERROR : could not find the ${ORACLE_USER} user's home directory."
+        exit 1
+fi
+
+if [ ! -d "${ORACLE_HOME_DIR}" ]; then
+        echo "ERROR : the ${ORACLE_USER} user's home directory does not exist."
+        exit 1
+fi
+
+if [ ! -f "${ORACLE_HOME_DIR}/${ENV_FILE}" ]; then
+        echo "ERROR : could not find the ${ORACLE_HOME_DIR}/${ENV_FILE} file."
+        exit 1
+fi
+
+ORACLE_ENV="${ORACLE_HOME_DIR}/${ENV_FILE}"
+export ORACLE_ENV
+
+# RETVAL
+# Exit return value. Used at the end of the script.
+#
+RETVAL=0
+
+# NAME
+# Name of this script.
+#
+NAME=`basename $0`
+
+case "$1" in
+	start)
+		echo -n $"Starting Oracle Databases: "
+
+		# Get ORACLE_SID's which are active in ORATAB.
+		LIST_SID=`egrep -vi '^$|^#' ${ORATAB} | grep :Y$ | cut -d':' -f1`
+
+		for ORACLE_SID in ${LIST_SID}; do
+
+			echo -n "${ORACLE_SID} "
+
+			# 1st check if the database is already running?
+			PMON=`ps -ef | egrep pmon_$ORACLE_SID  | grep -v grep`
+
+			if [ "${PMON}" != "" ]; then
+				echo "Database ${ORACLE_SID} already started."
+				continue
+			fi
+
+			# Get ORACLE_HOME for this particular ORACLE_SID.
+			ORACLE_HOME=`grep ^${ORACLE_SID}: ${ORATAB} | cut -d':' -f2`
+
+			if [ ! -d ${ORACLE_HOME} ]; then
+				echo "Unable to find the ORACLE_HOME: ${ORACLE_HOME}. Skipping this instance."
+				continue
+			fi
+
+			# Now start the instance.
+			su - ${ORACLE_USER} -c "source ${ORACLE_ENV}; \
+				unset SQLPATH; \
+				export ORACLE_HOME=${ORACLE_HOME}; \
+				export ORACLE_SID=${ORACLE_SID}; \
+				echo 'startup;' | sqlplus -s '/ as sysdba'" 2>&1 > /tmp/${NAME}.log
+
+			# Check if everything went as planned.
+			for STATE in started mounted opened; do
+				grep ${STATE} /tmp/${NAME}.log 2>&1 >/dev/null
+
+				if [ "$?" -ne "0" ]; then
+					echo "ERROR: Problem with instance ${ORACLE_SID}. Investigate."
+					cat /tmp/${NAME}.log
+					RETVAL="1"
+				fi
+			done
+		done
+
+		if [ "${RETVAL}" != "0" ]; then
+			echo_failure
+		else
+			echo_success
+		fi
+
+		rm /tmp/${NAME}.log >/dev/null 2>&1
+	;;
+
+	stop)
+		echo -n $"Stoping Oracle Databases: "
+
+		# Get ORACLE_SID's which are active in ORATAB.
+		LIST_SID=`egrep -vi '^$|^#' ${ORATAB} | grep :Y$ | cut -d':' -f1`
+
+		for ORACLE_SID in ${LIST_SID}; do
+
+			echo -n "${ORACLE_SID} "
+
+			# 1st check if the database is running?
+			PMON=`ps -ef | egrep pmon_$ORACLE_SID  | grep -v grep`
+
+			if [ "${PMON}" = "" ]; then
+				echo "Database ${ORACLE_SID} already down."
+				continue
+			fi
+
+			# Get ORACLE_HOME for this particular ORACLE_SID.
+			ORACLE_HOME=`grep ^${ORACLE_SID}: ${ORATAB} | cut -d':' -f2`
+
+			if [ ! -d ${ORACLE_HOME} ]; then
+				echo "Unable to find the ORACLE_HOME: ${ORACLE_HOME}. Skipping this instance."
+				continue
+			fi
+
+			# Now start the instance.
+			su - ${ORACLE_USER} -c "source ${ORACLE_ENV}; \
+				unset SQLPATH; \
+				export ORACLE_HOME=${ORACLE_HOME}; \
+				export ORACLE_SID=${ORACLE_SID}; \
+				echo 'shutdown immediate;' | sqlplus -s '/ as sysdba'" 2>&1 > /tmp/${NAME}.log
+
+			# Check if everything went as planned.
+			for STATE in closed dismounted shut down; do
+				grep ${STATE} /tmp/${NAME}.log 2>&1 >/dev/null
+
+				if [ "$?" -ne "0" ]; then
+					echo "ERROR: Problem with instance ${ORACLE_SID}. Investigate."
+					cat /tmp/${NAME}.log
+					RETVAL="1"
+				fi
+			done
+		done
+
+		if [ "${RETVAL}" != "0" ]; then
+			echo_failure
+		else
+			echo_success
+		fi
+
+		rm /tmp/${NAME}.log >/dev/null 2>&1
+        ;;
+
+	*)
+		echo $"Usage: $0 {start|stop}"
+		exit 1
+	;;
+esac
+
+exit $RETVAL
+
+# EOF

@@ -1,0 +1,12 @@
+# consumer.gssapi.ldif
+#
+# Enable GSSAPI authentication to this LDAP server. 
+dn: cn=config
+changetype: modify
+add: olcSaslHost
+olcSaslHost: bob.company.com
+-
+add: olcSaslRealm
+olcSaslRealm: COMPANY.COM
+
+# EOF

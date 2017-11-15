@@ -1,0 +1,16 @@
+# Kerberos indexes.
+dn: olcDatabase={1}bdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: objectClass eq
+-
+add: olcDbIndex
+olcDbIndex: krbPrincipalName eq
+-
+add: olcDbIndex
+olcDbIndex: sudoUser eq,sub
+-
+add: olcDbIndex
+olcDbIndex: uidNumber,gidNumber,memberUid,uniqueMember eq
+
+# EOF

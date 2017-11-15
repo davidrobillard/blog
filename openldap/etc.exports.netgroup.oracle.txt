@@ -1,0 +1,10 @@
+# /etc/exports
+#
+# NFS exports. See exports(5)
+#
+# David Robillard, April 9th, 2012.
+
+/export/home	@oracle(rw)
+/export/install	@oracle(rw)
+
+# EOF

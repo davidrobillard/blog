@@ -1,0 +1,26 @@
+# .aliases
+#
+# $Id$
+#
+# Finger friendly aliases. See alias(1).
+#
+# David Robillard, April 9th, 2012.
+
+alias d='ls -alF'
+alias c='clear'
+alias h='history 25'
+alias lsd='ls -alF | grep -i'
+alias sls='screen -ls'
+alias sr='screen -r'
+alias nstat='netstat -l -n -p -t -u -w'
+alias ran='rlwrap rman'
+alias wql='rlwrap sqlplus'
+alias mmm='rlwrap sqlplus "/ as sysdba"'
+alias cdh="cd $ORACLE_HOME"
+alias cdd="cd $ORACLE_HOME/dbs"
+alias cdn="cd $ORACLE_HOME/network/admin"
+alias cds="cd $SQLPATH"
+alias diag="cd $ORACLE_BASE/diag"
+alias listener='lsnrctl'
+
+# EOF

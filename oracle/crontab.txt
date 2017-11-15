@@ -1,0 +1,24 @@
+##
+# oracle's crontab.
+##
+
+# The time and date fields are:
+#
+# field		allowed values
+# -----		--------------
+# minute	0-59
+# hour		0-23
+# day of month	1-31
+# month		1-12 (or names)
+# day of week	0-7 (0 or 7 is Sun or use names)
+
+# Set ORACLE_BASE.
+ORACLE_BASE=/u01/app/oracle
+
+# Set ORACLE_HOME to the active one. Useful after a database upgrade.
+ORACLE_HOME=/u01/app/oracle/product/11.2.0.3
+
+# Clear audit logs every sunday at 22 h 00.
+00 22 * * 7 /usr/bin/find $ORACLE_BASE/admin/meta/adump -type f -iname "*.aud" -mtime +7 -exec rm {} \;
+
+# EOF

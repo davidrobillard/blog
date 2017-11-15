@@ -1,0 +1,67 @@
+# /etc/ntp.conf
+#
+# $Id: ntp.conf,v 1.1 2012/04/09 14:11:25 root Exp root $
+#
+# For more information about this file, see the man pages
+# ntp.conf(5), ntp_acc(5), ntp_auth(5), ntp_clock(5), ntp_misc(5), ntp_mon(5).
+# Or Expert Network Time Protocol by P. Rybaczyk. ISBN : 1-59059-484-3
+#
+# David Robillard, April 9th, 2012.
+
+# Full path to the driftfile.
+driftfile /var/lib/ntp/drift
+
+# Permit time synchronization with our time source, but do not
+# permit the source to query or modify the service on this system.
+restrict default kod nomodify notrap noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+
+# Permit all access over the loopback interface.  This could
+# be tightened as well, but to do so would effect some of
+# the administrative functions.
+restrict 127.0.0.1 
+
+# Use public servers from the pool.ntp.org project.
+server 0.centos.pool.ntp.org
+server 1.centos.pool.ntp.org
+server 2.centos.pool.ntp.org
+server time.nrc.ca
+server ntp1.cmc.ec.gc.ca
+server ntp2.cmc.ec.gc.ca
+
+# We will peer with our internal NTP server.
+#peer ntp2.caprion.com key 20
+
+# Undisciplined Local Clock. The local clock is a backup
+# in case any of the above servers are not available. 
+# See fudge command below.
+server	127.127.1.0
+
+# Here we use fudge with a very high stratum for the local clock.
+# The idea is that in the event that connectivity is lost to the
+# public NTP servers, then the undisciplined backup local clock
+# becomes the reference clock, but other clients that might be pointing
+# to this device will not attempt to synchronize their time to it.
+fudge	127.127.1.0 stratum 10	
+
+# Enable cryptography.
+#crypto
+
+# We don't use passwords for now.
+# includefile /etc/ntp/crypto/pw
+
+# Full path to the keys file containing the symmetric keys used
+# for ntpdc(8) and ntpq(8) authentication.
+keys /etc/ntp/keys
+
+# Specify the key identifier to use with the ntpdc utility.
+requestkey 11
+
+# Specify the key identifier to use with the ntpq utility.
+controlkey 12
+
+# Enable writing of statistics records.
+statsdir /var/run/ntpd/stats/
+statistics clockstats cryptostats loopstats peerstats
+
+# EOF

@@ -1,0 +1,76 @@
+# /etc/rsyslog.conf
+#
+# $Id: rsyslog.conf,v 1.4 2012/07/10 19:10:21 drobilla Exp $
+#
+# rsyslog v3 config file. See rsyslogd(8) and rsyslog.conf(5).
+# See http://www.rsyslog.com/troubleshoot for assistance.
+#
+# David Robillard, April 9th, 2012.
+
+#### MODULES ####
+
+$ModLoad imuxsock.so	# provides support for local system logging (e.g. via logger command)
+$ModLoad imklog.so	# provides kernel logging support (previously done by rklogd)
+$ModLoad immark.so	# provides --MARK-- message capability
+$ModLoad imudp.so	# Provides UDP syslog reception (part 1 of 2)
+$UDPServerRun 514	# Provides UDP syslog reception (part 2 of 2)
+$ModLoad imtcp.so	# Provides TCP syslog reception (part 1 of 2)
+$InputTCPServerRun 514	# Provides TCP syslog reception (part 2 of 2)
+
+#### GLOBAL DIRECTIVES ####
+
+# Use default timestamp format
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
+#### RULES ####
+
+# Send sudo(8) logs to /var/log/sudo.log
+if $programname == 'sudo' then /var/log/sudo.log
+& ~
+
+# Send slapd(8c) logs to /var/log/slapd.log
+if $programname == 'slapd' then /var/log/slapd.log
+& ~
+
+# Send krb5kdc(8) logs to /var/log/krb5kdc.log
+if $programname == 'krb5kdc' then /var/log/krb5kdc.log
+& ~
+
+# Send kadmind(8) logs to /var/log/kadmind.log
+if $programname == 'kadmind' then /var/log/kadmind.log
+& ~
+
+# Send snmpd(8) logs to /var/log/snmpd.log
+if $programname == 'snmpd' then /var/log/snmpd.log
+& ~
+
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+#kern.*                                                 /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages nor the local0 message (i.e. Oracle audit)
+*.info;mail.none;authpriv.none;cron.none;local0.none	/var/log/messages
+
+# The authpriv file has restricted access.
+authpriv.*					/var/log/secure
+
+# Log all the mail messages in one place.
+mail.*                                                  -/var/log/maillog
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 *
+
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                          /var/log/spooler
+
+# Save the Oracle audit logs to the Oracle audit trail.
+local0.*						/var/log/oracle/audit.log
+
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
+# EOF

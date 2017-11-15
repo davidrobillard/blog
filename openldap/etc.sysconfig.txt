@@ -1,0 +1,14 @@
+# /etc/sysconfig/nfs
+#
+# Configure NFS daemons. See rpc.nfsd(8).
+#
+# David Robillard, May 12th, 2012.
+
+MOUNTD_NFS_V2="no"
+LOCKD_TCPPORT=32800
+LOCKD_UDPPORT=32800
+RPCNFSDARGS="-N 2 -N 3 -s"
+MOUNTD_PORT=892
+STATD_OUTGOING_PORT=2020
+
+# EOF

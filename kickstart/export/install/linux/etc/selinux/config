@@ -1,0 +1,20 @@
+# /etc/selinux/config
+#
+# $Id: config,v 1.1 2012/05/17 20:12:39 root Exp $
+#
+# This file controls the state of SELinux on the system.
+#
+# David Robillard, April 16th, 2012.
+
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=disabled
+
+# SELINUXTYPE= can take one of these two values:
+#     targeted - Targeted processes are protected,
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+
+# EOF

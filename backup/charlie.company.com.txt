@@ -1,0 +1,38 @@
+# /backup/conf/charlie.company.com
+#
+# PLEASE BE AWARE OF THE FOLLOWING RULES:
+#
+# This file requires tabs between elements
+#
+# Directories require a trailing slash:
+#   right: /home/
+#   wrong: /home
+#
+# David Robillard, April 10th, 2012.
+
+config_version	1.2
+cmd_cp		/bin/cp
+cmd_rm		/bin/rm
+cmd_rsync	/usr/bin/rsync
+cmd_ssh		/backup/scripts/ssh_wrapper.sh
+cmd_logger	/usr/bin/logger
+cmd_du		/usr/bin/du
+cmd_rsnapshot_diff	/usr/bin/rsnapshot-diff
+verbose		2
+loglevel	3
+interval	daily	7
+
+snapshot_root	/backup/data/charlie.company.com
+logfile		/backup/log/charlie.company.com
+lockfile	/backup/run/charlie.company.com.pid
+
+rsync_short_args	-aR
+rsync_long_args		--protocol=29
+
+backup	backup@charlie.company.com:/root/	.
+backup	backup@charlie.company.com:/boot/	.
+backup	backup@charlie.company.com:/etc/	.
+backup	backup@charlie.company.com:/usr/home/	.
+backup	backup@charlie.company.com:/var/	.
+
+# EOF

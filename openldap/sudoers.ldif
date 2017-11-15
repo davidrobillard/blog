@@ -1,0 +1,12 @@
+# sudoers.ldif
+#
+# Create the ou=services container.
+# This container will later be used for 
+# autofs, netgroup and Kerberos to name a few.
+dn: ou=services,dc=company,dc=com
+ou: Services
+objectClass: top
+objectClass: organizationalUnit
+description: Group all services under this OU
+
+# EOF

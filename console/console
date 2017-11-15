@@ -1,0 +1,501 @@
+#!/bin/sh
+
+# /etc/init.d/console
+#
+# $Id$
+#
+# chkconfig: 2345 55 25
+# description: Serial console services
+#
+# Start, Stop or Restart the console screens.
+# This script requires a functionnal screen(1) package installed.
+#
+# David Robillard, March 20th, 2005.
+# Thomas Boutry, Jan. 29th, 2009.
+
+umask 022
+PATH="/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin"
+export PATH
+
+# CONFIG_FILE
+# Full path to the configuration file.
+#
+CONFIG_FILE="/etc/console/ports.conf"
+
+# SCREENCAP
+# Specify which terminal to emulate.
+#
+SCREENCAP="xterm"
+TERM="${SCREENCAP}"
+export SCREENCAP TERM 
+
+# CONSOLE_PID_DIRECTORY
+# Full path to the directory where the running screen PID are stored.
+#
+CONSOLE_PID_DIRECTORY="/var/run/console"
+
+
+#########################################################################
+# FUNCTIONS.                                                            #
+#########################################################################
+
+
+# f_check_uid()
+#       Make sure the UID is zero.
+#
+f_check_uid() {
+
+        ID=`id -u`
+
+        if [ "${ID}" -ne "0" ]; then
+                echo "ERROR: You must be root to run this script."
+                exit
+        fi
+}
+# END of f_check_uid()
+
+
+# f_check_screen()
+#       Check to see if screen(1) is installed.
+#
+f_check_screen() {
+
+	which screen >/dev/null 2>&1
+
+        if [ "$?" -ne "0" ]; then
+                echo "ERROR: Please make sure screen(1) is installed. "
+                exit 1
+        fi
+}
+# END of f_check_screen()
+
+
+# f_parse_config()
+#       Get value for console_console_directory.
+#       Build a list of names from console_portN.
+#
+f_parse_config() {
+
+	#####################################
+	# Console config directory validation
+	#####################################
+
+        grep '^console_config_directory=' ${CONFIG_FILE} 2>&1 >/dev/null
+        if [ $? -ne 0 ]; then
+                echo "ERROR: console_config_directory is not set in ${CONFIG_FILE}. Bailing out."
+                exit 1
+        else
+                CONFIG_DIR=`grep '^console_config_directory=' ${CONFIG_FILE} | cut -d'"' -f2`
+
+                if [ ! -d ${CONFIG_DIR} ]; then
+			mkdir -p $CONFIG_DIR
+			if [ $? -ne 0 ] ; then
+                        	echo "ERROR: Unable to create console configuration directory: ${CONFIG_DIR}. Bailing out."
+	                        exit 1
+			fi
+                fi
+        fi
+
+	#####################################
+	# Console log directory validation
+	#####################################
+
+        grep '^console_log_directory=' ${CONFIG_FILE} 2>&1 >/dev/null
+
+        if [ $? -ne 0 ]; then
+                echo "ERROR: console_log_directory is not set in ${CONFIG_FILE}. Bailing out."
+                exit 1
+        else
+                LOG_DIR=`grep '^console_log_directory=' ${CONFIG_FILE} | cut -d'"' -f2`
+
+                if [ ! -d ${LOG_DIR} ]; then
+			mkdir -p ${LOG_DIR}
+			if [ $? -ne 0 ] ; then
+	                        echo "ERROR: Unable to create console log directory: ${CONFIG_DIR}. Bailing out."
+	                        exit 1
+			fi
+                fi
+        fi
+	
+	#####################################
+	# Console port validation
+	#####################################
+
+        egrep '^console_module[0-9]?[0-9]_port[0-9]?[0-9]=' ${CONFIG_FILE} 2>&1 >/dev/null
+
+        if [ $? -ne 0 ]; then
+                echo "ERROR: No console ports are configured. Bailing out."
+                exit 1
+        else
+		LIST_OF_SERVERS=`egrep '^console_module[0-9]?[0-9]_port[0-9]?[0-9]=' ${CONFIG_FILE} `
+        fi
+
+}
+# END of f_parse_config()
+
+f_convert_portInfo() {
+        # Retrieve arguments :
+        # Server name
+        if [ "x$1" = "x" ]; then
+                echo "ERROR: Function f_convert_portInfo() requires an arguments. Bailing out."
+                return 1
+        else
+                FULLPORTINFO="$1"
+        fi
+	
+	case "$FULLPORTINFO" in
+
+		# Comment-out : this was the old way to do things.
+		# First module on the first PCI card.
+		# console_module1_port1) DGAP_TTY="/dev/tty_dgap_0_0" ;;
+		# console_module1_port2) DGAP_TTY="/dev/tty_dgap_0_1" ;;
+		# console_module1_port3) DGAP_TTY="/dev/tty_dgap_0_2" ;;
+		# console_module1_port4) DGAP_TTY="/dev/tty_dgap_0_3" ;;
+		# console_module1_port5) DGAP_TTY="/dev/tty_dgap_0_4" ;;
+		# console_module1_port6) DGAP_TTY="/dev/tty_dgap_0_5" ;;
+		# console_module1_port7) DGAP_TTY="/dev/tty_dgap_0_6" ;;
+		# console_module1_port8) DGAP_TTY="/dev/tty_dgap_0_7" ;;
+		# console_module1_port9) DGAP_TTY="/dev/tty_dgap_0_8" ;;
+		# console_module1_port10) DGAP_TTY="/dev/tty_dgap_0_9" ;;
+		# console_module1_port11) DGAP_TTY="/dev/tty_dgap_0_10" ;;
+		# console_module1_port12) DGAP_TTY="/dev/tty_dgap_0_11" ;;
+		# console_module1_port13) DGAP_TTY="/dev/tty_dgap_0_12" ;;
+		# console_module1_port14) DGAP_TTY="/dev/tty_dgap_0_13" ;;
+		# console_module1_port15) DGAP_TTY="/dev/tty_dgap_0_14" ;;
+		# console_module1_port16) DGAP_TTY="/dev/tty_dgap_0_15" ;;
+
+		console_module1_port1) DGAP_TTY="/dev/ttya01" ;;
+		console_module1_port2) DGAP_TTY="/dev/ttya02" ;;
+		console_module1_port3) DGAP_TTY="/dev/ttya03" ;;
+		console_module1_port4) DGAP_TTY="/dev/ttya04" ;;
+		console_module1_port5) DGAP_TTY="/dev/ttya05" ;;
+		console_module1_port6) DGAP_TTY="/dev/ttya06" ;;
+		console_module1_port7) DGAP_TTY="/dev/ttya07" ;;
+		console_module1_port8) DGAP_TTY="/dev/ttya08" ;;
+		console_module1_port9) DGAP_TTY="/dev/ttya09" ;;
+		console_module1_port10) DGAP_TTY="/dev/ttya10" ;;
+		console_module1_port11) DGAP_TTY="/dev/ttya11" ;;
+		console_module1_port12) DGAP_TTY="/dev/ttya12" ;;
+		console_module1_port13) DGAP_TTY="/dev/ttya13" ;;
+		console_module1_port14) DGAP_TTY="/dev/ttya14" ;;
+		console_module1_port15) DGAP_TTY="/dev/ttya15" ;;
+		console_module1_port16) DGAP_TTY="/dev/ttya16" ;;
+
+		# Comment-out : old way to do things.
+		# Second module on the first PCI card.
+		# console_module2_port1) DGAP_TTY="/dev/tty_dgap_0_16" ;;
+		# console_module2_port2) DGAP_TTY="/dev/tty_dgap_0_17" ;;
+		# console_module2_port3) DGAP_TTY="/dev/tty_dgap_0_18" ;;
+		# console_module2_port4) DGAP_TTY="/dev/tty_dgap_0_19" ;;
+		# console_module2_port5) DGAP_TTY="/dev/tty_dgap_0_20" ;;
+		# console_module2_port6) DGAP_TTY="/dev/tty_dgap_0_21" ;;
+		# console_module2_port7) DGAP_TTY="/dev/tty_dgap_0_22" ;;
+		# console_module2_port8) DGAP_TTY="/dev/tty_dgap_0_23" ;;
+		# console_module2_port9) DGAP_TTY="/dev/tty_dgap_0_24" ;;
+		# console_module2_port10) DGAP_TTY="/dev/tty_dgap_0_25" ;;
+		# console_module2_port11) DGAP_TTY="/dev/tty_dgap_0_26" ;;
+		# console_module2_port12) DGAP_TTY="/dev/tty_dgap_0_27" ;;
+		# console_module2_port13) DGAP_TTY="/dev/tty_dgap_0_28" ;;
+		# console_module2_port14) DGAP_TTY="/dev/tty_dgap_0_29" ;;
+		# console_module2_port15) DGAP_TTY="/dev/tty_dgap_0_30" ;;
+		# console_module2_port16) DGAP_TTY="/dev/tty_dgap_0_31" ;;
+
+		console_module2_port1) DGAP_TTY="/dev/ttya17" ;;
+		console_module2_port2) DGAP_TTY="/dev/ttya18" ;;
+		console_module2_port3) DGAP_TTY="/dev/ttya19" ;;
+		console_module2_port4) DGAP_TTY="/dev/ttya20" ;;
+		console_module2_port5) DGAP_TTY="/dev/ttya21" ;;
+		console_module2_port6) DGAP_TTY="/dev/ttya22" ;;
+		console_module2_port7) DGAP_TTY="/dev/ttya23" ;;
+		console_module2_port8) DGAP_TTY="/dev/ttya24" ;;
+		console_module2_port9) DGAP_TTY="/dev/ttya25" ;;
+		console_module2_port10) DGAP_TTY="/dev/ttya26" ;;
+		console_module2_port11) DGAP_TTY="/dev/ttya27" ;;
+		console_module2_port12) DGAP_TTY="/dev/ttya28" ;;
+		console_module2_port13) DGAP_TTY="/dev/ttya29" ;;
+		console_module2_port14) DGAP_TTY="/dev/ttya30" ;;
+		console_module2_port15) DGAP_TTY="/dev/ttya31" ;;
+		console_module2_port16) DGAP_TTY="/dev/ttya32" ;;
+
+		*) echo "Error with port: $FULLPORTINFO" ; return 1 ;;
+	esac
+
+	PORTSERIAL="${DGAP_TTY}"
+	
+	echo $PORTSERIAL
+
+	return 0
+		
+} 
+# END of f_convert_portInfo
+
+# f_create_screenrc()
+#       Removes the screenrc.{SERVER} file in CONFIG_DIR and recreates it.
+#       We proceed this way to prevent users from changing the screenrc file.
+#
+f_create_screenrc() {
+
+        if [ "x$1" = "x" ]; then
+                echo "ERROR: Function f_create_screenrc() expects an argument."
+                exit
+        else
+                SERVER="$1"
+        fi
+
+        #
+        # Always recreate the screenrc file to prevent user modifications.
+        #
+	if [ -f ${CONFIG_DIR}/screenrc.${SERVER} ] ; then
+        	rm ${CONFIG_DIR}/screenrc.${SERVER} 2>&1 >/dev/null
+	fi
+
+        SCREENRC="${CONFIG_DIR}/screenrc.${SERVER}"
+
+        printf "# screenrc.${SERVER}\n\n" > ${SCREENRC}
+        echo "startup_message off                       # Do not display a startup message." >> ${SCREENRC}
+        echo "defscrollback 2000                        # Default scrollback buffer to 2000 lines." >> ${SCREENRC}
+	echo "title ${SERVER}                           # Set window title to ${SERVER}." >> ${SCREENRC}
+        echo "term xterm                       # Set TERMCAP variable to vt100." >> ${SCREENRC}
+        echo "logfile ${LOG_DIR}/${SERVER}.log  # Specify the log file." >> ${SCREENRC}
+        echo "log on                                    # Turn on logging." >> ${SCREENRC}
+        echo "deflog on                                    # Turn on logging." >> ${SCREENRC}
+        echo "bind ^k                                   # Remove the C-a C-k kill binding." >> ${SCREENRC}
+        echo "bind k                                    # Remove the C-a k kill binding." >> ${SCREENRC}
+        echo "bind K kill                               # Bind C-a K to kill the window." >> ${SCREENRC}
+        echo "bind ^c                                   # Remove the C-a C-c shell creation binding." >> ${SCREENRC}
+        echo "bind c                                    # Remove the C-a c shell creation binding." >> ${SCREENRC}
+        echo "bind :                                    # Remove the C-a : command line mode binding." >> ${SCREENRC}
+        echo "bind H                                    # Remove the C-a H logging binding." >> ${SCREENRC}
+        echo "detach                                    # Detach." >> ${SCREENRC}
+        printf "\n# EOF\n" >> ${SCREENRC}
+}
+# END of f_create_screenrc().
+
+
+# f_start_console()
+#       Start the console.
+#
+f_start_console() {
+
+	# Retrieve arguments :
+	# Server name
+        if [ "x$1" = "x" ]; then
+                echo "ERROR: Function f_start_console() requires an arguments. Bailing out."
+		echo "Server name "
+                return 1
+        else
+                SERVER="$1"
+        fi
+
+	# Retrieve arguments :
+	# Speed connection
+	if [ "x$2" = "x" ]; then
+                echo "ERROR: Function f_start_console() requires an arguments. Bailing out."
+		echo "Server speed"
+                return 1
+        else
+                SPEED="$2"
+        fi
+
+	# Retrieve arguments :
+	# parity  
+	if [ "x$3" = "x" ]; then
+                echo "ERROR: Function f_start_console() requires an arguments. Bailing out."
+                echo "Server parity control"
+                return 1
+        else
+                PARITY="$3"
+        fi
+
+	# Retrieve arguments :
+        # port
+        if [ "x$4" = "x" ]; then
+                echo "ERROR: Function f_start_console() requires an arguments. Bailing out."
+                echo "Server port information"
+                return 1
+        else
+                PORTINFO="$4"
+        fi
+
+
+	PORT=`f_convert_portInfo $PORTINFO`
+	if [ $? -ne 0 ] ; then
+		echo " ${SERVER} invalid port information."
+		return 1
+	fi
+
+	# check if screen for this server is already active
+	SCREEN_PID_VALIDATION=`screen -ls ${SERVER} | grep ${SERVER} | awk '{print $1}'`
+        if [ "x${SCREEN_PID_VALIDATION}" != "x" ]; then
+                echo "WARNING : Screen for server __ $SERVER __ already active (maybe try restart?)"
+                return 1
+        fi
+
+        screen -m -d -m -S ${SERVER} -c ${CONFIG_DIR}/screenrc.${SERVER} -e^Xa -t "${SERVER}" $PORT $SPEED 
+        echo "screen -d -m -S ${SERVER} -c ${CONFIG_DIR}/screenrc.${SERVER} -e^Xa -t "${SERVER}" $PORT $SPEED "
+
+        if [ $? -ne 0 ]; then
+                echo "WARNING: An error occured while starting screen for ${SERVER}."
+                continue
+        fi
+
+        SCREEN_PID=`screen -ls ${SERVER} | grep ${SERVER} | awk '{print $1}'`
+
+        if [ "x${SCREEN_PID}" = "x" ]; then
+                echo "ERROR: Could not locate PID for ${SERVER}. Bailing out."
+		return 1
+        fi
+
+        echo "${SCREEN_PID}" > ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid
+	return 0
+}
+# END of f_start_console().
+
+
+# f_stop_console()
+#       Stop a running console.
+#
+f_stop_console() {
+
+        if [ "x$1" = "x" ]; then
+                echo "ERROR: Function f_stop_console() requires an argument. Bailing out."
+                return 1
+        fi
+
+        SERVER="$1"
+
+        if [ ! -f ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid ]; then
+                echo "ERROR: Could not find PID file ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid."
+               return 1 
+        fi
+
+        SCREEN_PID=`cat ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid | cut -d '.' -f1`
+
+        if [ "x${SCREEN_PID}" = "x" ]; then
+                echo "ERROR: Could not get ${SERVER} screen PID from ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid."
+                continue
+        fi
+
+        echo ${SCREEN_PID} | grep "^[0-9]" 2>&1 >/dev/null
+
+        if [ $? -ne 0 ]; then
+                echo "ERROR: This PID is not a number: ${SCREEN_PID}."
+                echo "ERROR: Check ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid file."
+                continue
+        fi
+
+        # First, detach the screen in case someone is working in it. Then kill it.
+        screen -D ${SERVER} 2>&1 >/dev/null
+        kill ${SCREEN_PID}
+
+        if [ $? -eq 0 ]; then
+                rm ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid 2>&1 >/dev/null
+        else
+                echo "ERROR: A problem occured while killing screen ${SERVER}."
+                echo "ERROR: Remove ${CONSOLE_PID_DIRECTORY}/${SERVER}.pid."
+                continue
+        fi
+}
+# END of f_stop_console().
+
+
+#
+# Check how we're called.
+#
+f_check_uid
+f_check_screen
+
+if [ ! -d ${CONSOLE_PID_DIRECTORY} ]; then
+        mkdir -p ${CONSOLE_PID_DIRECTORY} 2>&1 >/dev/null
+
+        if [ $? -ne 0 ]; then
+                echo "ERROR: Could not create ${CONSOLE_PID_DIRECTORY}. Bailing out."
+                exit 1
+        fi
+fi
+
+case $1 in
+        start)  echo "Starting serial console server."
+
+                f_parse_config
+
+		# List of service with Name:Speed:Parity
+                for SERVERINFO in ${LIST_OF_SERVERS}; do
+			PORTINFO=`echo $SERVERINFO | cut -d "=" -f 1`
+			NAME=`echo $SERVERINFO | cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 1`	
+			SPEED=`echo $SERVERINFO |cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 2`	
+			PARITY=`echo $SERVERINFO |cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 3`	
+
+			if [ "$2" = "" ] ; then 
+
+       		                f_create_screenrc ${NAME}
+               		        f_start_console ${NAME} ${SPEED} ${PARITY} ${PORTINFO} 
+			else 
+				NAME=`echo $NAME | tr -d " "`
+			        if [ "$2" = "$NAME" ] ; then 
+				     f_create_screenrc ${NAME}
+                                     f_start_console ${NAME} ${SPEED} ${PARITY} ${PORTINFO}
+			        fi
+			fi
+                done
+
+                echo "Serial Console Server Started."
+        ;;
+
+        stop)
+                echo "Stoping serial console server."
+
+                f_parse_config
+
+		# List of service with Name:Speed:Parity
+                for SERVERINFO in ${LIST_OF_SERVERS}; do
+			PORTINFO=`echo $SERVERINFO | cut -d "=" -f 1`
+			NAME=`echo $SERVERINFO | cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 1`	
+			SPEED=`echo $SERVERINFO |cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 2`	
+			PARITY=`echo $SERVERINFO |cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 3`	
+
+                        if [ "$2" = "" ] ; then
+                        	f_stop_console ${NAME}
+			else
+				NAME=`echo $NAME | tr -d " "`
+                                if [ "$2" = "$NAME" ] ; then
+                                     f_stop_console ${NAME}
+                                fi
+                        fi
+
+                done
+        ;;
+
+        restart)
+                echo "Restarting serial console server."
+
+                f_parse_config
+
+                # List of service with Name:Speed:Parity
+                for SERVERINFO in ${LIST_OF_SERVERS}; do
+                        PORTINFO=`echo $SERVERINFO | cut -d "=" -f 1`
+                        NAME=`echo $SERVERINFO | cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 1`
+                        SPEED=`echo $SERVERINFO |cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 2`
+                        PARITY=`echo $SERVERINFO |cut -d "=" -f 2 | sed -e 's/"/ /g' | cut -d ":" -f 3`
+			
+			if [ "$2" = "" ] ; then
+                        	f_stop_console ${NAME}
+	                        sleep 1
+       		                f_start_console ${NAME} ${SPEED} ${PARITY} ${PORTINFO} 
+			else
+				NAME=`echo $NAME | tr -d " "`
+                                if [ "$2" = "$NAME" ] ; then
+					f_stop_console ${NAME}
+	                                sleep 1
+       		                        f_start_console ${NAME} ${SPEED} ${PARITY} ${PORTINFO}
+				fi
+			fi
+                done
+        ;;
+
+        *)      echo "Usage: `basename $0` [ start | stop | restart ] [ hostname ]"
+                exit
+        ;;
+esac
+
+# EOF

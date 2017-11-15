@@ -1,0 +1,14 @@
+# /etc/logrotate.d/ntpd
+#
+# $Id: ntpd,v 1.1 2012/05/17 14:57:34 root Exp $
+#
+# Handled ntpd(8) log files.
+#
+# David Robillard, April 9th, 2012.
+
+/var/log/ntpd.log {
+        create 640 ntp ntp
+        weekly
+}
+
+# EOF

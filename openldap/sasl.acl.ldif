@@ -1,0 +1,116 @@
+# gssapi.acl.ldif
+#
+# Specify ACLs for use with SASL GSSAPI Kerberos.
+# We will work on three different dn:
+# 
+# First on dn: olcDatabase={0}config,cn=config
+# Second on dn: olcDatabase={1}bdb,cn=config
+# Third on dn: olcDatabase={2}monitor,cn=config
+
+dn: olcDatabase={0}config,cn=config
+changetype: modify
+delete: olcAccess
+olcAccess: {0}
+-
+add: olcAccess
+olcAccess: {0}to *  
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+ by dn.base="cn=admin,dc=company,dc=com" manage  
+ by dn.regex="uid=.*/admin,cn=company.com,cn=gssapi,cn=auth" manage 
+ by * none
+-
+delete: olcAccess
+olcAccess: {1}
+-
+add: olcAccess
+olcAccess: {1}to attrs=userPassword,shadowLastChange  
+ by dn.regex="uid=.*/admin,cn=company.com,cn=gssapi,cn=auth" manage  
+ by dn.base="cn=admin,dc=company,dc=com" manage  
+ by self write  
+ by dn="cn=nssproxy,ou=users,dc=company,dc=com" read  
+ by * auth  
+ by * none
+-
+# Here we simply delete the last redundant ACL that we don't need anymore.
+delete: olcAccess
+olcAccess: {2}
+
+##
+# We switch our work to the Berkeley DB backend database.
+##
+dn: olcDatabase={1}bdb,cn=config
+changetype: modify
+delete: olcAccess
+olcAccess: {0}
+-
+# Allow Kerberos /admin principals to manage user passwords.
+add: olcAccess
+olcAccess: {0}to attrs=userPassword,userPKCS12 
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+ by dn.base="cn=admin,dc=company,dc=com" manage  
+ by dn.regex="uid=.*/admin,cn=company.com,cn=gssapi,cn=auth" manage 
+ by dn.exact="cn=nssproxy,ou=users,dc=company,dc=com" read 
+ by self write  
+ by anonymous auth 
+ by * none
+-
+delete: olcAccess
+olcAccess: {1}
+-
+# Allow Kerberos /admin principals to manage user passwords.
+add: olcAccess
+olcAccess: {1}to attrs=shadowLastChange 
+ by self write 
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+ by dn.base="cn=admin,dc=company,dc=com" manage  
+ by dn.regex="uid=.*/admin,cn=company.com,cn=gssapi,cn=auth" manage 
+ by dn.exact="cn=nssproxy,ou=users,dc=company,dc=com" read 
+ by * none
+-
+delete: olcAccess
+olcAccess: {2}
+-
+# Allow Kerberos /admin principals to see the Kerberos container, but not change it.
+# This will force administration of the Kerberos realm with Kerberos tools.
+add: olcAccess
+olcAccess: {2}to dn.subtree="ou=kerberos,ou=services,dc=company,dc=com"  
+ by dn.exact="cn=krbadmin,ou=users,dc=company,dc=com" write 
+ by dn.regex="uid=.*/admin,cn=company.com,cn=gssapi,cn=auth" read 
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read 
+ by dn.base="cn=admin,dc=company,dc=com" read  
+ by * none
+-
+# Allo */admin principals to manage this OpenLDAP server.
+# This will be used with Apache Directory Studio.
+add: olcAccess
+olcAccess: {3}to dn.subtree="dc=company,dc=com" 
+ by dn.base="cn=admin,dc=company,dc=com" manage  
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+ by dn.regex="uid=.*/admin,cn=company.com,cn=gssapi,cn=auth" manage 
+ by dn.exact="cn=krbadmin,ou=users,dc=company,dc=com" write 
+ by dn.exact="cn=nssproxy,ou=users,dc=company,dc=com" read 
+ by * none
+-
+# Allow the autofsclient/* Kerberos principals to see the contents of
+# the automount maps.
+add: olcAccess
+olcAccess: {4}to dn.subtree="ou=autofs,ou=services,dc=company,dc=com" 
+ by dn.regex="uid=autofsclient/.*,cn=company.com,cn=gssapi,cn=auth" read 
+ by * none
+
+##
+# Now we switch to dn: olcDatabase={2}monitor,cn=config
+##
+dn: olcDatabase={2}monitor,cn=config
+changetype: modify
+delete: olcAccess
+olcAccess: {0}
+-
+add: olcAccess
+olcAccess: {0}to *  
+ by dn.base="cn=admin,dc=company,dc=com" manage  
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage  
+ by dn.regex="uid=.*/admin,cn=company.com,cn=gssapi,cn=auth" manage 
+ by * none
+
+# EOF

@@ -1,0 +1,31 @@
+# /export/backup/conf/rdbms.mysql.hourly
+#
+# $Id: rdbms.mysql.hourly,v 1.1 2013/02/22 18:33:56 drobilla Exp $
+#
+# Configuration to backup all the MySQL instances.
+#
+# David Robillard, April 8th, 2009.
+
+config_version	1.2
+cmd_cp		/bin/cp
+cmd_rm		/bin/rm
+cmd_rsync	/usr/bin/rsync
+cmd_ssh		/export/backup/scripts/ssh_wrapper.sh
+cmd_logger	/usr/bin/logger
+cmd_du		/usr/bin/du
+cmd_rsnapshot_diff	/usr/bin/rsnapshot-diff
+verbose		2
+loglevel	3
+interval	hourly	7
+
+snapshot_root	/export/backup/data/rdbms.mysql/
+logfile		/export/backup/log/rdbms.mysql.hourly.log
+lockfile	/export/backup/run/rdbms.mysql.hourly.pid
+
+rsync_short_args	-aR
+rsync_long_args		--protocol=29
+
+# MySQL database backup.
+backup_script	/export/backup/scripts/mysql_backup_hourly.sh	all_servers/
+
+# EOF

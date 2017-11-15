@@ -1,0 +1,143 @@
+#!/bin/sh
+
+# oracle.listener
+#
+# $Id$
+#
+# RedHat specific Startup/Shutdown script for Oracle Database Listener.
+#
+# chkconfig: 3 81 08
+# description: Startup/Shutdown script for Oracle Database Listener.
+#
+# David Robillard, August 19th, 2008.
+
+umask 022
+PATH="/bin:/usr/bin"
+export PATH
+
+# Source function library.
+. /etc/init.d/functions
+
+# ORACLE_USER
+# Username of the Oracle database software.
+#
+ORACLE_USER="oracle"
+export ORACLE_USER
+
+# ORATAB
+# Full path to the Oracle oratab file.
+#
+ORATAB="/etc/oratab"
+export ORATAB
+
+# ENV_FILE
+# Name of the ${ORACLE_USER}'s environment file.
+#
+ENV_FILE=".bash_profile"
+export ENV_FILE
+
+# Find the oracle user's .bash_profile.
+ORACLE_HOME_DIR=`finger -mp ${ORACLE_USER} | grep ^Directory: | cut -d' ' -f2`
+
+if [ "x${ORACLE_HOME_DIR}" = "x" ]; then
+	echo "ERROR : could not find the ${ORACLE_USER} user's home directory."
+	exit 1
+fi
+
+if [ ! -d "${ORACLE_HOME_DIR}" ]; then
+	echo "ERROR : the ${ORACLE_USER} user's home directory does not exist."
+	exit 1
+fi
+
+if [ ! -f "${ORACLE_HOME_DIR}/${ENV_FILE}" ]; then
+	echo "ERROR : could not find the ${ORACLE_HOME_DIR}/${ENV_FILE} file."
+	exit 1
+fi
+
+ORACLE_ENV="${ORACLE_HOME_DIR}/${ENV_FILE}"
+export ORACLE_ENV
+
+ORACLE_HOME=`egrep -vi '^$|^#' ${ORATAB} | cut -d':' -f2 | tail -1`
+
+if [ "${ORACLE_HOME}" = "" ]; then
+	echo "ERROR: Could not find ORACLE_HOME from ${ORATAB}."
+	exit 1
+fi
+
+if [ ! -d "${ORACLE_HOME}" ]; then
+	echo "ERROR: ${ORACLE_HOME} does not exist."
+	exit 1
+fi
+
+# RETVAL
+# Exit return value. Used at the end of the script.
+#
+RETVAL=0
+
+# NAME
+# Base name of this script.
+#
+NAME=`basename $0`
+
+case "$1" in
+	start)
+		echo -n $"Starting Oracle Listener: "
+
+		su - ${ORACLE_USER} -c "source ${ORACLE_ENV}; \
+					unset SQLPATH; \
+					export ORACLE_HOME=${ORACLE_HOME}; \
+					lsnrctl start" 2>&1 > /tmp/${NAME}.log
+
+		# Check if everything went as planned.
+		grep 'The command completed successfully' /tmp/${NAME}.log 2>&1 >/dev/null
+
+		if [ "$?" -ne "0" ]; then
+			RETVAL="1"
+			echo_failure
+		fi
+
+		echo_success
+
+		rm /tmp/${NAME}.log
+	;;
+
+	stop)
+		echo -n $"Stoping Oracle Listener: "
+
+		su - ${ORACLE_USER} -c "source ${ORACLE_ENV}; \
+					unset SQLPATH; \
+					export ORACLE_HOME=${ORACLE_HOME}; \
+					lsnrctl stop" 2>&1 > /tmp/${NAME}.log
+
+		# Check if everything went as planned.
+		grep 'The command completed successfully' /tmp/${NAME}.log 2>&1 >/dev/null
+
+		if [ "$?" -ne "0" ]; then
+			RETVAL="1"
+			echo_failure
+		fi
+
+		echo_success
+
+		rm /tmp/${NAME}.log
+        ;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+	;;
+
+	status)
+		su - ${ORACLE_USER} -c "source ${ORACLE_ENV}; unset SQLPATH; export ORACLE_HOME=${ORACLE_HOME}; lsnrctl status"
+	;;
+
+	*)
+		echo $"Usage: $0 {start|stop|restart|status}"
+		exit 1
+	;;
+esac
+
+exit $RETVAL
+
+# EOF

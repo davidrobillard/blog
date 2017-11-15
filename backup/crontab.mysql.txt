@@ -1,0 +1,19 @@
+# root's crontab
+# 
+# The time and date fields are:
+# 
+#  field          allowed values
+#  -----          --------------
+#  minute         0-59
+#  hour           0-23
+#  day of month   1-31
+#  month          1-12 (or names, see below)
+#  day of week    0-7 (0 or 7 is Sun, or use names)
+
+# Daily MySQL full backup.
+15 23 * * * /export/backup/scripts/backup_runner.sh /export/backup/conf/rdbms.mysql.daily daily
+
+# Hourly MySQL backup.
+00 * * * * /export/backup/scripts/backup_runner.sh /export/backup/conf/rdbms.mysql.hourly hourly
+
+# EOF

@@ -1,0 +1,13 @@
+# /etc/logrotate.d/backup
+#
+# Prevent backup log files from growing too big.
+#
+# David Robillard, May 12th, 2012.
+
+/backup/log/*.com {
+	missingok
+	rotate 7
+	weekly
+}
+
+# EOF

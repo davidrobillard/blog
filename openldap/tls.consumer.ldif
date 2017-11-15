@@ -1,0 +1,18 @@
+# tls.consumer.ldif
+#
+# Configure TLS for our consumer OpenLDAP server.
+#
+# First, install our server's TLS certificate.
+dn: cn=config
+add: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/pki/tls/certs/bob.company.com.pem
+-
+# Now our server's TLS key.
+add: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/pki/tls/certs/bob.company.com.key
+-
+# This is our local CA's certificate.
+add: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/pki/tls/certs/companyCA.crt
+
+# EOF

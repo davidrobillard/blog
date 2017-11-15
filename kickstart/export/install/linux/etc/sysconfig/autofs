@@ -1,0 +1,24 @@
+# /etc/sysconfig/autofs
+#
+# $Id: autofs,v 1.1 2012/05/17 15:11:45 root Exp $
+#
+# System-wide autofs(8) daemon configuration.
+#
+# David Robillard, May 15th, 2012.
+
+MASTER_MAP_NAME="auto.master"
+TIMEOUT=300
+BROWSE_MODE="no"
+MOUNT_NFS_DEFAULT_PROTOCOL=4
+# Change LOGGING to "none" for production.
+LOGGING="verbose"
+LDAP_URI="ldap://ldap1.company.com"
+SEARCH_BASE="ou=autofs,ou=services,dc=company,dc=com"
+MAP_OBJECT_CLASS="automountMap"
+ENTRY_OBJECT_CLASS="automount"
+MAP_ATTRIBUTE="ou"
+ENTRY_ATTRIBUTE="cn"
+VALUE_ATTRIBUTE="automountInformation"
+USE_MISC_DEVICE="yes"
+
+# EOF

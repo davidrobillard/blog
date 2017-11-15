@@ -1,0 +1,21 @@
+# users+groups.ldif
+#
+# The base suffix.
+dn: dc=company,dc=com
+dc: company
+objectClass: top
+objectClass: domain
+
+dn: ou=users,dc=company,dc=com
+ou: Users
+objectClass: top
+objectClass: organizationalUnit
+description: Central location for UNIX users
+
+dn: ou=groups,dc=company,dc=com
+ou: Groups
+objectClass: top
+objectClass: organizationalUnit
+description: Central location for UNIX groups
+
+# EOF

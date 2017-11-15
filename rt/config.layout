@@ -1,0 +1,37 @@
+# config.layout
+#
+# $Id: config.layout,v 1.2 2012/10/17 10:09:31 drobilla Exp drobilla $
+#
+# Request Tracking custom layout. See http://bestpractical.com/rt/
+# Replace the original config.layout file this one.
+# Then run the configure script with --enable-layout=CentOS
+#
+# David Robillard, Oct. 17th, 2012.
+
+<Layout CentOS>
+  prefix:               /opt/rt
+  exec_prefix:          /usr
+  bindir:               ${exec_prefix}/bin
+  sbindir:              ${exec_prefix}/sbin
+  sysconfdir:           /etc/rt
+  mandir:               ${exec_prefix}/share/man
+  plugindir:            ${prefix}/plugins
+  libdir:               ${prefix}/lib
+  datadir:              ${prefix}/share
+  htmldir:              ${prefix}/html
+  lexdir:               ${prefix}/po
+  fontdir:              ${prefix}/fonts
+  manualdir:            ${prefix}/doc
+  logfiledir:           /var/log
+  localstatedir:        /var/run/rt
+  masonstatedir:        ${localstatedir}/mason_data
+  sessionstatedir:      ${localstatedir}/session_data
+  customdir:            ${prefix}/custom
+  custometcdir:         ${customdir}/etc
+  customhtmldir:        ${customdir}/html
+  customlexdir:         ${customdir}/po
+  customlibdir:         ${customdir}/lib
+  customplugindir:      ${customdir}/plugins
+</Layout>
+
+# EOF

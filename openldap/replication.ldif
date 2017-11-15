@@ -1,0 +1,9 @@
+# Create the replication user.
+dn: cn=replication,dc=company,dc=com
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: replication.kong
+description: OpenLDAP Replication User
+userPassword: changeme
+
+# EOF

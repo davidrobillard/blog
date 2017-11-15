@@ -1,0 +1,12 @@
+# /etc/logrotate.d/slapd
+#
+# Rotate slapd(8) log file.
+#
+# David Robillard, April 23rd, 2012.
+
+/var/log/slapd.log {
+ rotate 7
+ compress
+}
+
+# EOF

@@ -1,0 +1,21 @@
+# /etc/sysconfig/autofs
+#
+# Configuration for the automount(8) daemon.
+#
+# David Robillard, May 11th, 2012.
+
+TIMEOUT=300
+BROWSE_MODE="no"
+MOUNT_NFS_DEFAULT_PROTOCOL=4
+# Change LOGGING to "none" while in production mode.
+LOGGING="debug"
+LDAP_URI="ldap://alice.company.com"
+SEARCH_BASE="ou=autofs,ou=services,dc=company,dc=com"
+MAP_OBJECT_CLASS="automountMap"
+ENTRY_OBJECT_CLASS="automount"
+MAP_ATTRIBUTE="ou"
+ENTRY_ATTRIBUTE="cn"
+VALUE_ATTRIBUTE="automountInformation"
+USE_MISC_DEVICE="yes"
+
+# EOF

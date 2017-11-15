@@ -1,0 +1,11 @@
+# /etc/sysconfig/ntpd
+#
+# $Id: ntpd,v 1.1 2012/05/17 14:53:55 root Exp $
+#
+# System-wide ntpd(8) configuration.
+#
+# David Robillard, April 9th, 2012.
+
+OPTIONS="-u ntp:ntp -p /var/run/ntpd.pid -g -l /var/log/ntpd.log"
+
+# EOF

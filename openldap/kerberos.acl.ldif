@@ -1,0 +1,40 @@
+# kerberos.acl.ldif
+
+dn: olcDatabase={1}bdb,cn=config
+changetype: modify
+delete: olcAccess
+olcAccess: {0}
+-
+add: olcAccess
+olcAccess: {0}to attrs=userPassword,userPKCS12 
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+ by dn.exact="cn=nssproxy,ou=users,dc=company,dc=com" read 
+ by self write  
+ by anonymous auth 
+ by * none
+-
+delete: olcAccess
+olcAccess: {1}
+-
+add: olcAccess
+olcAccess: {1}to attrs=shadowLastChange 
+ by self write 
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage 
+ by dn.exact="cn=nssproxy,ou=users,dc=company,dc=com" read 
+ by * none
+-
+delete: olcAccess
+olcAccess: {2}
+-
+add: olcAccess
+olcAccess: {2}to dn.subtree="ou=kerberos,ou=services,dc=company,dc=com"  
+ by dn.exact="cn=krbadmin,ou=users,dc=company,dc=com" write 
+ by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" read 
+ by * none
+-
+add: olcAccess
+olcAccess: {3}to dn.subtree="dc=company,dc=com" 
+ by dn.exact="cn=nssproxy,ou=users,dc=company,dc=com" read 
+ by * none
+
+# EOF

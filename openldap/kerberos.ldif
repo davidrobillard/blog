@@ -1,0 +1,36 @@
+# kerberos.ldif
+#
+# First, create the kerberos organisational unit.
+dn: ou=kerberos,ou=services,dc=company,dc=com
+ou: kerberos
+objectClass: top
+objectClass: organizationalUnit
+description: Kerberos OU to store Kerberos principals.
+
+# Next, the krbadmin group.
+dn: cn=krbadmin,ou=groups,dc=company,dc=com
+objectClass: top
+objectClass: posixGroup
+cn: krbadmin
+gidNumber: 800
+description: Kerberos administrator's group.
+
+# Then the krbadmin user.
+dn: cn=krbadmin,ou=users,dc=company,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: posixAccount
+objectClass: top
+cn: krbadmin
+givenName: Kerberos Administrator
+mail: kerberos.admin@company.com
+sn: krbadmin
+uid: krbadmin
+uidNumber: 800
+gidNumber: 800
+homeDirectory: /home/krbadmin
+loginShell: /bin/false
+displayname: Kerberos Administrator
+
+# EOF

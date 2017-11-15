@@ -1,0 +1,26 @@
+# netgroup.ldif
+#
+# Create the container for netgroup configurations.
+dn: ou=netgroup,ou=services,dc=company,dc=com
+ou: netgroup
+objectClass: top
+objectClass: organizationalUnit
+description: NFS Netgroups
+
+# Add a first netgroup example.
+dn: cn=oracle,ou=netgroup,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: nisNetgroup
+cn: oracle
+nisNetgroupTriple: (oracle.company.com,,)
+description: All Oracle machines
+
+# And a second netgroup example.
+dn: cn=dev,ou=netgroup,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: nisNetgroup
+cn: dev
+nisNetgroupTriple: (bob.company.com,,)
+description: All Development servers
+
+# EOF

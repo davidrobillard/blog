@@ -1,0 +1,18 @@
+# ~/ldap/sasl.ldif 
+#
+# Configure SASL for our OpenLDAP server.
+
+dn: cn=config
+changetype: modify
+delete: olcSaslSecProps
+-
+add: olcSaslSecProps
+olcSaslSecProps: noanonymous,noplain
+-
+add: olcSaslHost
+olcSaslHost: alice.company.com
+-
+add: olcSaslRealm
+olcSaslRealm: COMPANY.COM
+
+# EOF

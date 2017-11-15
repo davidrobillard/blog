@@ -1,0 +1,22 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/bin
+
+export PATH
+unset USERNAME
+
+PS1='[\[\033[1m\]\u\[\033[0m\]@\h] \W {\!}# '
+export PS1
+
+alias c='clear'
+alias d='ls -alF'
+alias h='history 30'
+
+# EOF

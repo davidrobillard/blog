@@ -1,0 +1,16 @@
+# ${ORACLE_HOME}/network/admin/sqlnet.ora
+#
+# $Id$
+#
+# Oracle Network Client startup parameter file example
+#
+# David Robillard, July 10th, 2012.
+
+names.directory_path = ( TNSNAMES, ONAMES, HOSTNAME)
+
+sqlnet.expire_time = 10
+
+# See Doc ID 399727.1 and 3136.1 for more info.
+sqlnet.inbound_connect_timeout = 10
+
+# EOF

@@ -1,0 +1,34 @@
+# $ORACLE_HOME/network/admin/listener.ora
+#
+# $Id$
+#
+# Network Configuration File. 
+#
+# David Robillard, July 5th, 2012.
+
+LISTENER =
+ (DESCRIPTION_LIST =
+  (DESCRIPTION =
+   (ADDRESS = (PROTOCOL = ipc)(KEY = EXTPROC))
+   (ADDRESS = (PROTOCOL = TCP)(HOST = opus.company.com)(PORT = 1521))
+  )
+ )
+
+SID_LIST_LISTENER =
+ (SID_LIST =
+  (SID_DESC =
+   (SID_NAME = PLSExtProc)
+   (ORACLE_HOME = /u01/app/oracle/product/11.2.0.3/dbhome_1)
+   (PROGRAM = extproc)
+  )
+ )
+
+ (SID_LIST =
+  (SID_DESC =
+   (GLOBAL_DBNAME = meta.company.com)
+   (SID_NAME = meta)
+   (ORACLE_HOME = /u01/app/oracle/product/11.2.0.3/dbhome_1)
+  )
+ )
+
+# EOF

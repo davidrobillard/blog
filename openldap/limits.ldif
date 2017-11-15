@@ -1,0 +1,13 @@
+# Add limits to the cn=accesslog database.
+dn: olcDatabase={3}hdb,cn=config
+changetype: modify
+add: olcLimits
+olcLimits: dn.exact="cn=replication,dc=company,dc=com" time.soft=unlimited time.hard=unlimited size.soft=unlimited size.hard=unlimited
+
+# Add limits to the dc=company,dc=com database.
+dn: olcDatabase={1}bdb,cn=config
+changetype: modify
+add: olcLimits
+olcLimits: dn.exact="cn=replication,dc=company,dc=com" time.soft=unlimited time.hard=unlimited size.soft=unlimited size.hard=unlimited
+
+# EOF

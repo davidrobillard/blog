@@ -1,0 +1,18 @@
+# ${ORACLE_HOME}/network/admin/tnsnames.ora
+#
+# $Id$
+#
+# Transparent Network Substrate configuration file.
+#
+# David Robillard, June 3rd, 2012.
+
+META =
+ (DESCRIPTION =
+  (ADDRESS = (PROTOCOL = TCP)(HOST = opus.company.com.com)(PORT = 1521))
+  (CONNECT_DATA =
+   (SERVER = DEDICATED)
+   (SERVICE_NAME = meta.company.com)
+  )
+ )
+
+# EOF

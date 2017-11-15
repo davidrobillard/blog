@@ -1,0 +1,66 @@
+# sudoers.ldif
+#
+# Create the ou=services container.
+# This container will later be used for 
+# autofs, netgroup and Kerberos to name a few.
+dn: ou=services,dc=company,dc=com
+ou: Services
+objectClass: top
+objectClass: organizationalUnit
+description: Group all services under this OU
+
+# Create the sudo ou to hold our sudoers configuration.
+dn: ou=sudo,ou=services,dc=company,dc=com
+objectClass: organizationalUnit
+description: sudo
+objectClass: top
+
+# Add the actuall sudoers configuration in the sudo ou.
+dn: cn=defaults,ou=sudo,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: sudoRole
+cn: defaults
+description: Default sudoOption's go here
+sudoOption: requiretty
+sudoOption: !visiblepw
+sudoOption: always_set_home
+sudoOption: env_reset
+sudoOption: env_keep=COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS
+sudoOption: env_keep+=MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE
+sudoOption: env_keep+=LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES
+sudoOption: env_keep+=LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE
+sudoOption: env_keep+=LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY
+sudoOption: secure_path=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin:/usr/kerberos/sbin:/usr/kerberos/bin
+sudoOrder: 1
+
+dn: cn=root,ou=sudo,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: sudoRole
+cn: root
+sudoUser: root
+sudoHost: ALL
+sudoRunAsUser: ALL
+sudoCommand: ALL
+sudoOrder: 2
+
+dn: cn=panic,ou=sudo,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: sudoRole
+cn: panic
+sudoUser: panic
+sudoHost: ALL
+sudoRunAsUser: ALL
+sudoCommand: ALL
+sudoOrder: 3
+
+dn: cn=%sysadmin,ou=sudo,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: sudoRole
+cn: %sysadmin
+sudoUser: %sysadmin
+sudoHost: ALL
+sudoRunAsUser: ALL
+sudoCommand: ALL
+sudoOrder: 4
+
+# EOF

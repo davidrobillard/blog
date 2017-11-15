@@ -1,0 +1,9 @@
+# Add the cn=module configuration.
+dn: cn=module,cn=config
+objectClass: olcModuleList
+cn: module
+olcModulePath: /usr/lib/openldap
+olcModuleLoad: accesslog.la
+olcModuleLoad: syncprov.la
+
+# EOF

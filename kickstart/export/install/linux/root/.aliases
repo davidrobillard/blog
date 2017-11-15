@@ -1,0 +1,13 @@
+# /root/.aliases
+#
+# $Id: .aliases,v 1.1 2012/05/17 14:40:49 root Exp $
+#
+# Finger friendly aliases.
+#
+# David Robillard, April 19th, 2012.
+
+alias c='clear'
+alias d='ls -alF'
+alias h='history 30'
+
+# EOF

@@ -1,0 +1,10 @@
+# Add an overlay on the cn=accesslog database.
+dn: olcOverlay=syncprov,olcDatabase={3}hdb,cn=config
+changetype: add
+objectClass: olcOverlayConfig
+objectClass: olcSyncProvConfig
+olcOverlay: syncprov
+olcSpNoPresent: TRUE
+olcSpReloadHint: TRUE
+
+# EOF

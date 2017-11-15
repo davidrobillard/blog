@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+ <autofs_ldap_sasl_conf
+  usetls="yes"
+  tlsrequired="no"
+  authrequired="simple"
+  user="cn=nssproxy,ou=users,dc=company,dc=com"
+  secret="change.nssproxy.user.password"
+/>
+<!-- EOF -->

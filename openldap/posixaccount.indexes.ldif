@@ -1,0 +1,31 @@
+# posixAccount.indexes.ldif
+#
+# Create indexes for the posixAccount schema.
+
+dn: olcDatabase={1}bdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: default pres,eq
+-
+add: olcDbIndex
+olcDbIndex: uid
+-
+add: olcDbIndex
+olcDbIndex: cn,sn pres,eq,sub
+-
+add: olcDbIndex
+olcDbIndex: objectClass eq
+-
+add: olcDbIndex
+olcDbIndex: memberUid eq
+-
+add: olcDbIndex
+olcDbIndex: uniqueMember eq
+-
+add: olcDbIndex
+olcDbIndex: uidNumber
+-
+add: olcDbIndex
+olcDbIndex: gidNumber eq
+
+# EOF

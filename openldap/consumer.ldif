@@ -1,0 +1,29 @@
+# consumer.ldif
+#
+# Change the consumer's configuration.
+
+# Boost the log level to help us debug.
+dn: cn=config
+changetype: modify
+replace: olcLogLevel
+olcLogLevel: stats
+
+# Add some indexes to the primary database.
+dn: olcDatabase={1}bdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: entryCSN eq
+-
+add: olcDbIndex
+olcDbIndex: uid eq
+-
+add: olcDbIndex
+olcDbIndex: cn eq
+-
+add: olcDbIndex
+olcDbIndex: ou eq
+-
+add: olcDbIndex
+olcDbIndex: dc eq
+
+# EOF

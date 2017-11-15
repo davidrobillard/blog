@@ -1,0 +1,27 @@
+# Add a temporary user to test the refint overlay.
+
+dn: cn=refint.user,ou=users,dc=company,dc=com
+changetype: add
+shadowMin: 0
+loginShell: /bin/bash
+userPassword:: TTN0NGwxbmsh
+uidNumber: 2000
+gidNumber: 501
+shadowMax: 99999
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: refint.user
+gecos: Refint User
+shadowLastChange: 15474
+cn: refint.user
+homeDirectory: /nfs/home/refint.user
+shadowWarning: 7
+
+dn: cn=test.group,ou=groups,dc=company,dc=com
+changetype: modify
+add: memberUid
+memberUid: refint.user
+
+# EOF

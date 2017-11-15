@@ -1,0 +1,12 @@
+# /etc/hosts
+#
+# $Id$
+#
+# Hosts table. Use DNS instead.
+#
+# David Robillard, October 17th, 2013.
+
+127.0.0.1	localhost	localhost.localdomain	localhost4	localhost4.localdomain4
+::1		localhost	localhost.localdomain	localhost6	localhost6.localdomain6
+
+# EOF

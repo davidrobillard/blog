@@ -1,0 +1,11 @@
+# /etc/logrotate.d/sudo
+#
+# Log rotation for /var/log/sudo.log.
+#
+# David Robillard, April 9th, 2012.
+
+/var/log/sudo.log {
+	rotate 7
+}
+
+# EOF

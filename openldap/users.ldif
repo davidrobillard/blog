@@ -1,0 +1,73 @@
+# users.ldif
+#
+# Various users.
+
+dn: cn=drobilla,ou=users,dc=company,dc=com
+uid: drobilla
+gecos: David Robillard
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+userPassword: {SSHA}RsAMqOI3647qg1gAZF3x2BKBnp0sEVfa
+shadowLastChange: 15140
+shadowMin: 0
+shadowMax: 99999
+shadowWarning: 7
+loginShell: /bin/bash
+uidNumber: 1100
+gidNumber: 1100
+homeDirectory: /home/drobilla
+
+dn: cn=test.user,ou=users,dc=company,dc=com
+uid: test.user
+gecos: Test User
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+userPassword: {SSHA}RsAMqOI3647qg1gAZF3x2BKBnp0sEVfa
+shadowLastChange: 15140
+shadowMin: 0
+shadowMax: 99999
+shadowWarning: 7
+loginShell: /bin/bash
+uidNumber: 1101
+gidNumber: 1101
+homeDirectory: /home/test.user
+
+dn: cn=panic,ou=users,dc=company,dc=com
+uid: panic
+gecos: Panic User
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+userPassword: {SSHA}RsAMqOI3647qg1gAZF3x2BKBnp0sEVfa
+shadowLastChange: 15140
+shadowMin: 0
+shadowMax: 99999
+shadowWarning: 7
+loginShell: /bin/bash
+uidNumber: 911
+gidNumber: 911
+homeDirectory: /home/panic
+
+dn: cn=nssproxy,ou=users,dc=company,dc=com
+uid: nssproxy
+gecos: Network Service Switch Proxy User
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+userPassword: {SSHA}RsAMqOI3647qg1gAZF3x2BKBnp0sEVfa
+shadowLastChange: 15140
+shadowMin: 0
+shadowMax: 99999
+shadowWarning: 7
+loginShell: /bin/false
+uidNumber: 801
+gidNumber: 801
+homeDirectory: /home/nssproxy
+
+# EOF

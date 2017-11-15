@@ -1,0 +1,12 @@
+# tnsnames.ora
+
+RT =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = alice.company.com)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = rt.company.com)
+    )
+  )
+
+# EOF

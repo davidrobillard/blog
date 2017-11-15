@@ -1,0 +1,58 @@
+# .bash_profile
+#
+# $Id$
+#
+# Oracle RDBMS 11gR2 bourne again shell profile.
+#
+# David Robillard, April 9th, 2012.
+
+umask 022
+
+EDITOR="vi"
+export EDITOR
+
+PAGER="less"
+export PAGER
+
+ORACLE_BASE="/u01/app/oracle"
+export ORACLE_BASE
+
+ORACLE_HOME="${ORACLE_BASE}/product/11.2.0.3/dbhome_1"
+export ORACLE_HOME
+
+ORACLE_SID="meta"
+export ORACLE_SID
+
+ADR_HOME="/u01/app/oracle/diag"
+export ADR_HOME
+
+SQLPATH="/nfs/home/oracle/scripts"
+export SQLPATH
+
+ORACLE_PATH="${ORACLE_BASE}/common/sql:${ORACLE_HOME}/rdbms/admin"
+export ORACLE_PATH
+
+SHLIB_PATH="${ORACLE_HOME}/lib"
+export SHLIB_PATH
+
+LD_LIBRARY_PATH="${ORACLE_HOME}/lib:/usr/lib"
+export LD_LIBRARY_PATH
+
+PATH="/usr/kerberos/bin:/usr/kerberos/sbin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/sbin:/usr/sbin"
+PATH="${PATH}:${ORACLE_HOME}/bin:${ORACLE_HOME}/OPatch"
+export PATH
+
+MANPATH="/usr/share/man:/usr/local/share/man"
+export MANPATH
+
+PS1="[\u@\h] \W {\!}$ "
+export PS1
+
+RANDFILE="/root/.rnd"
+export RANDFILE
+
+if [ -f ~/.aliases ]; then
+	. ~/.aliases
+fi
+
+# EOF

@@ -1,0 +1,18 @@
+# /tftpboot/pxelinux.cfg/default
+#
+# $Id: default,v 1.1 2012/04/12 18:47:16 root Exp $
+#
+# PXE server configuration.
+#
+# David Robillard, April 12th, 2012.
+
+default menu.c32
+prompt 1
+
+# Wait 6 seconds before automatic boot.
+timeout 60
+
+label ^CentOS 6 x86_64 installation
+ kernel centos/6/x86_64/vmlinuz append initrd=centos/6/x86_64/initrd.img ramdisk_size=5939 ks=http://kickstart.company.com/kickstart/oxygen.company.com.ks ksdevice=link
+
+# EOF

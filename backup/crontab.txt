@@ -1,0 +1,19 @@
+# root's crontab
+# 
+# The time and date fields are:
+# 
+#  field          allowed values
+#  -----          --------------
+#  minute         0-59
+#  hour           0-23
+#  day of month   1-31
+#  month          1-12 (or names, see below)
+#  day of week    0-7 (0 or 7 is Sun, or use names)
+
+# Backup server alice.company.com at each day at 10:00 PM.
+00 22 * * * /backup/scripts/backup_runner.sh /backup/conf/alice.company.com daily
+
+# Backup workstation charlie.company.com at each day at 10:15 PM.
+15 22 * * * /backup/scripts/backup_runner.sh /backup/conf/charlie.company.com daily
+
+# EOF

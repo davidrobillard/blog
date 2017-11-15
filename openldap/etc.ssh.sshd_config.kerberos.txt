@@ -1,0 +1,41 @@
+# /etc/ssh/sshd_config
+#
+# This is the sshd server system-wide configuration file.
+# See sshd_config(5) for more information.
+#
+# WARNING : This configuration restricts ssh access to the
+# WARNING : groups listed in AllowGroups. Make sure your
+# WARNING : user is part of at least one of those groups.
+# WARNING : If not, YOU MAY BE LOCKED OUT OF YOUR SERVER.
+# WARNING : If that happens, use the system's console.
+#
+# David Robillard, April 10th, 2012.
+
+AddressFamily inet
+Port 22
+Protocol 2
+AllowGroups backup sysadmin test.group
+SyslogFacility AUTHPRIV
+LoginGraceTime 30s
+PermitRootLogin no
+StrictModes yes
+IgnoreRhosts yes
+PermitEmptyPasswords no
+PasswordAuthentication yes
+AllowTcpForwarding no
+X11Forwarding yes
+PrintLastLog yes
+ClientAliveInterval 120
+ClientAliveCountMax 2
+Banner /etc/issue
+
+# Kerberos required configurations (see lines below).
+UsePAM no
+ChallengeResponseAuthentication yes
+KerberosAuthentication yes
+KerberosOrLocalPasswd yes
+KerberosTicketCleanup yes
+GSSAPIAuthentication yes
+GSSAPICleanupCredentials yes
+
+# EOF

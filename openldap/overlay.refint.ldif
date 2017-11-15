@@ -1,0 +1,10 @@
+# Add the refint overlay on the primary database.
+
+dn: olcOverlay=refint,olcDatabase={1}bdb,cn=config
+objectClass: olcOverlayConfig
+objectClass: olcRefintConfig
+olcOverlay: refint
+olcRefintAttribute: memberUid
+olcRefintNothing: cn=admin,dc=company,dc=com
+
+# EOF

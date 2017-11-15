@@ -1,0 +1,13 @@
+# Next, configure the accesslog database.
+dn: olcDatabase=hdb,cn=config
+changetype: add
+objectClass: olcDatabaseConfig
+objectClass: olcHdbConfig
+olcDatabase: hdb
+olcDbDirectory: /var/lib/ldap/accesslog
+olcSuffix: cn=accesslog
+olcRootDN: cn=admin,dc=company,dc=com
+olcDbIndex: default eq
+olcDbIndex: entryCSN,objectClass,reqEnd,reqResult,reqStart
+
+# EOF

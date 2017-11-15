@@ -1,0 +1,13 @@
+# sudoers.indexes.ldif
+#
+# Create indexes for the sudo schema.
+
+dn: olcDatabase={1}bdb,cn=config
+changetype: modify
+add: olcDbIndex
+olcDbIndex: sudoUser eq
+-
+add: olcDbIndex
+olcDbIndex: sudoHost eq
+
+# EOF

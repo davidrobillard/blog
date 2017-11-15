@@ -1,0 +1,43 @@
+# autofs.ldif
+#
+# First create the container for autofs configs.
+dn: ou=autofs,ou=services,dc=company,dc=com
+ou: AutoFS
+objectClass: top
+objectClass: organizationalUnit
+description: Automount maps
+
+# Next create the auto.master map container.
+dn: ou=auto.master,ou=autofs,ou=services,dc=company,dc=com
+ou: auto.master
+objectClass: top
+objectClass: automountMap
+
+# Create the /nfs mountpoint.
+dn: cn=/nfs,ou=auto.master,ou=autofs,ou=services,dc=company,dc=com
+cn: /nfs
+objectClass: top
+objectClass: automount
+automountInformation: ldap:ou=auto.nfs,ou=autofs,ou=services,dc=company,dc=com rsize=8192,wsize=8192
+
+# Create the auto.nfs map container.
+dn: ou=auto.nfs,ou=autofs,ou=services,dc=company,dc=com
+ou: auto.nfs
+objectClass: top
+objectClass: automountMap
+
+# Create the home value for the auto.nfs map.
+dn: cn=home,ou=auto.nfs,ou=autofs,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: automount
+cn: home
+automountInformation: alice.company.com:/export/home
+
+# Create the install value for the auto.nfs map.
+dn: cn=install,ou=auto.nfs,ou=autofs,ou=services,dc=company,dc=com
+objectClass: top
+objectClass: automount
+cn: install
+automountInformation: alice.company.com:/export/install
+
+# EOF
